@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="jquery.svg.package-1.5.0/jquery.svg.css"/>
+    <script type="text/javascript" src="js/jquery-2.2.0.js"></script>
+    <script type="text/javascript" src="jquery.svg.package-1.5.0/jquery.svg.js"></script>
+    <script type="text/javascript" src="jquery.svg.package-1.5.0/svg.js"></script>
+    <script type="text/javascript" src="js/timer.js"></script>
+    <script type="text/javascript" src="js/clockdigit.js"></script>
+    <script type="text/javascript" src="js/geometry.js"></script>
+    <title>Drawing Triangulation</title>
+</head>
+<body>
+<div id="timer" style="width:300px;height:300px"></div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        new DG.Timer({
+            renderTo:"#timer"
+        });
+    });
+
+</script>
+
+</body>
+</html>
