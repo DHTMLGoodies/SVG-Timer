@@ -4,77 +4,92 @@ DG.Timer = function (config) {
 
     this.renderTo = $(config.renderTo);
     if (config.showHours != undefined)this.showHours = config.showHours;
-    if (config.countDownFrom != undefined)this.countDownFrom = config.countDownFrom * 1000;
+    if (config.countDownFrom != undefined) {
+        this.countDownFrom = config.countDownFrom;
+        if (config.showWheel != undefined)this.showWheel = config.showWheel;
+    }
+
+    if(config.backgroundStyles != undefined)this.backgroundStyles = config.backgroundStyles;
+    if(config.digitStyles != undefined)this.digitStyles = config.digitStyles;
+    if(config.wheelStyles != undefined)this.wheelStyles = config.wheelStyles;
+    if(config.colonStyles != undefined)this.colonStyles = config.colonStyles;
 
     this.configure();
-
-
-
 };
 
 $.extend(DG.Timer.prototype, {
-
-    lineSettings: {fill: "transparent", stroke: "#00FFFF", strokeWidth: 1},
 
     renderTo: undefined,
     svg: undefined,
 
     showHours: true,
     countDownFrom: undefined,
-
+    showWheel: false,
     updateInterval: 1000,
 
-    active: false,
+    digitStyles:undefined,
+    colonStyles:undefined,
+
+    active: undefined,
 
     startTime: undefined,
     elapsed: undefined,
+    wheelStyles:undefined,
 
-    digits: {
-        hour: undefined,
-        minutes: [],
-        seconds: [],
-        colons: []
-    },
+    digits:undefined,
 
-    sizes: {
-        canvas: undefined,
-        digitArea: undefined,
-        digits: undefined,
-        spaceBetweenDigits: undefined,
-    },
+    wheel: undefined,
+
+    sizes: undefined,
 
     digitOffset: undefined,
 
     configure: function () {
 
+        this.sizes = {};
         this.measure();
+
+        this.elapsed = 0;
+
+        this.digits = {};
+        this.digits.minutes = [];
+        this.digits.seconds = [];
+        this.digits.colons = [];
 
         this.renderTo.svg({
             onLoad: function (svg) {
                 this.svg = svg;
                 svg._svg.style.position = "absolute";
-                var surface = svg.rect(0, 0, this.sizes.canvas.width, this.sizes.canvas.height, {
-                    id: 'surface',
-                    fill: 'transparent'
-                });
-                resetSize(svg, '100%', '100%');
+                if(this.backgroundStyles == undefined){
+                    this.backgroundStyles = {};
+                }
+
+                this.backgroundStyles.id = "surface";
+                if(this.backgroundStyles.fill == undefined)this.backgroundStyles.fill = "transparent";
+
+                var surface = svg.rect(0, 0, this.sizes.canvas.width, this.sizes.canvas.height, this.backgroundStyles);
+                this.renderWheel();
                 this.renderDigits();
 
 
-
-                this.showTime(this.getStartTime());
+                this.showTime(0);
                 // this.debug();
             }.bind(this)
         });
 
-        setInterval(this.update.bind(this), 1000);
+        setInterval(this.update.bind(this), 100);
     },
 
     measure: function () {
+
+
         this.sizes.canvas = {x: 0, y: 0, width: this.renderTo.width(), height: this.renderTo.height()};
 
-        var relativeSize = 0.65;
+        if (this.showWheel) {
+            this.sizes.canvas.width = this.sizes.canvas.height = Math.min(this.renderTo.width(), this.renderTo.height());
+        }
 
+        var relativeSize = this.showWheel ? 0.65 : 1;
 
         this.sizes.digitArea = {
             width: this.sizes.canvas.width * relativeSize,
@@ -104,6 +119,17 @@ $.extend(DG.Timer.prototype, {
             this.sizes.digitArea.width, this.sizes.digitArea.height);
     },
 
+    renderWheel: function () {
+        if (!this.showWheel)return;
+
+        this.wheel = new DG.ClockWheel({
+            svg: this.svg,
+            bounds: this.sizes.canvas,
+            styles : this.wheelStyles
+        });
+
+    },
+
     renderDigits: function () {
 
         var x = this.sizes.digitArea.x;
@@ -112,63 +138,49 @@ $.extend(DG.Timer.prototype, {
         if (this.showHours) {
 
             this.digits.hour = new DG.ClockDigit({
-                svg: this.svg,
+                styles: this.digitStyles,svg: this.svg,
                 bounds: {x: x, y: y, width: this.sizes.digits.width, height: this.sizes.digits.height}
             });
 
             x += this.sizes.digits.width + this.sizes.spaceBetweenDigits;
 
             this.digits.colons.push(new DG.ClockColon({
-                svg: this.svg, bounds: { x: x, y: y, width: this.sizes.colon, height: this.sizes.digits.height}
+                styles: this.colonStyles,svg: this.svg, bounds: {x: x, y: y, width: this.sizes.colon, height: this.sizes.digits.height}
             }));
 
             x += this.sizes.colon + this.sizes.spaceBetweenDigits;
         }
 
         this.digits.minutes.push(new DG.ClockDigit({
-            svg: this.svg,
+            styles: this.digitStyles,svg: this.svg,
             bounds: {x: x, y: y, width: this.sizes.digits.width, height: this.sizes.digits.height}
         }));
         x += this.sizes.digits.width + this.sizes.spaceBetweenDigits;
         this.digits.minutes.push(new DG.ClockDigit({
-            svg: this.svg,
+            styles: this.digitStyles,svg: this.svg,
             bounds: {x: x, y: y, width: this.sizes.digits.width, height: this.sizes.digits.height}
         }));
 
         x += this.sizes.digits.width + this.sizes.spaceBetweenDigits;
 
         this.digits.colons.push(new DG.ClockColon({
-            svg: this.svg, bounds: { x: x, y: y, width: this.sizes.colon, height: this.sizes.digits.height}
+            styles: this.colonStyles,svg: this.svg, bounds: {x: x, y: y, width: this.sizes.colon, height: this.sizes.digits.height}
         }));
 
         x += this.sizes.colon + this.sizes.spaceBetweenDigits;
 
         this.digits.seconds.push(new DG.ClockDigit({
+            styles: this.digitStyles,
             svg: this.svg,
             bounds: {x: x, y: y, width: this.sizes.digits.width, height: this.sizes.digits.height}
         }));
 
         x += this.sizes.digits.width + this.sizes.spaceBetweenDigits;
         this.digits.seconds.push(new DG.ClockDigit({
+            styles: this.digitStyles,
             svg: this.svg,
             bounds: {x: x, y: y, width: this.sizes.digits.width, height: this.sizes.digits.height}
         }));
-
-    },
-
-    debugRect: function (x, y, width, height) {
-        this.svg.rect(x, y,
-            width, height, this.lineSettings);
-    },
-
-    resetSize: function (svg, width, height) {
-        svg.configure({
-            width: width || $(svg._container).width(),
-            height: height || $(svg._container).height()
-        });
-    },
-
-    reset: function () {
 
     },
 
@@ -176,45 +188,56 @@ $.extend(DG.Timer.prototype, {
         if (this.elapsed == undefined)this.elapsed = 0;
         this.startTime = new Date().getTime();
         this.active = true;
-
     },
 
     showTime: function (ms) {
-        var seconds = Math.round(ms / 1000) % 60;
+
+        var totalSeconds = Math.floor(ms / 1000);
+
+        if (this.countDownFrom != undefined) {
+            totalSeconds = Math.max(0, (this.countDownFrom) - totalSeconds);
+        }
+
+        var seconds = totalSeconds % 60;
+
         var sec2 = seconds % 10;
         var sec1 = (seconds - sec2) / 10;
         this.digits.seconds[0].showDigit(sec1 % 10);
         this.digits.seconds[1].showDigit(sec2 % 10);
 
-        var minutes = Math.floor(ms / 60000);
+        var minutes = Math.floor(totalSeconds / 60);
+
         var min2 = minutes % 10;
         var min1 = (minutes - min2) / 10;
 
         this.digits.minutes[0].showDigit(min1 % 10);
         this.digits.minutes[1].showDigit(min2 % 10);
-
-        // this.digits.colons[this.digits.colons.length-1].toggle();
     },
-
 
     update: function () {
         if (!this.active)return;
+        var elapsed = this.getElapsed();
+        this.showTime(elapsed);
 
-        this.showTime(this.getCurrentTime());
-    },
-
-    getStartTime: function(){
-        return this.countDownFrom != undefined ? this.countDownFrom : 0;
-    },
-
-    getCurrentTime:function(){
-        var time = this.elapsed + new Date().getTime() - this.startTime;
-
-        if(this.countDownFrom != undefined){
-            return Math.max(0, this.countDownFrom - time);
+        if(this.showWheel){
+            this.wheel.update(this.countDownFrom * 1000, elapsed);
         }
+    },
 
-        return time;
+    getElapsed: function () {
+        if (this.startTime == undefined)return 0;
+        return this.elapsed + new Date().getTime() - this.startTime;
+    },
+
+    reset: function () {
+        this.elapsed = 0;
+        this.startTime = undefined;
+        this.active = false;
+        this.showTime(0);
+
+        if(this.showWheel){
+            this.wheel.update(this.countDownFrom * 1000, 0);
+        }
     },
 
     onTimesUp: function () {
@@ -222,14 +245,14 @@ $.extend(DG.Timer.prototype, {
     },
 
     pause: function () {
-
+        this.active = false;
+        this.showTime(this.getElapsed());
+        this.elapsed = this.getElapsed();
     },
 
     add: function (seconds) {
         this.elapsed += (seconds * 1000);
         this.elapsed = Math.max(0, this.elapsed);
     }
-
-
 });
 

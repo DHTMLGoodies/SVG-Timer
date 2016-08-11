@@ -8,6 +8,15 @@ DG.ClockDigit = function (config) {
     this.bounds = config.bounds;
     this.squareSize = this.bounds.width / 3;
 
+    if(config.styles != undefined){
+        this.digitStyle = config.styles;
+    }else{
+        this.digitStyle =  {fill: "#000"   };
+    }
+
+    if(this.digitStyle.strokeWidth == undefined)this.digitStyle.strokeWidth = 1;
+    if(this.digitStyle.stroke == undefined)this.digitStyle.stroke = "#FFF";
+
     this.render();
 
     this.showDigit(0);
@@ -18,7 +27,7 @@ $.extend(DG.ClockDigit.prototype, {
     svg: undefined,
     bounds: undefined,
 
-    digitStyle: {fill: "#000", stroke: "#FFF", strokeWidth: 1, "stroke-linecap": "round"},
+    digitStyle: undefined,
     squareSize: undefined,
 
     els: undefined,
@@ -35,80 +44,18 @@ $.extend(DG.ClockDigit.prototype, {
         [0,2,5], // 7
         [0,1,2,3,4,5,6], // 8
         [0,1,2,3,5,6] // 9
-
-
     ],
 
-
     render: function () {
-        // this.debug();
-
         var height = 4;
-
         this.els = [];
-
-        this.els.push({ visible:true, path: this.addPath({x: 0, y: 0}, {x: 2, y: 0},
-        "f02 f20 t20 t04 f44 f02"
-        )}); // 0, top horizontal
-        this.els.push({ visible:true, path: 
-            this.addPath({x: 0, y: 0}, {x: 0, y: height},
-            "f02 f44 t40 t12 t00"
-            )
-        }); //1, top left
-
-        this.els.push({ visible:true, path:
-            this.addPath({x: 2, y: 0}, {x: 2, y: height},
-            "f04 f20 f42 t41 t32 t00")
-
-        }); // 2, top right
-
-        this.els.push({ visible:true, path:
-            this.addPath({x: 0, y: height}, {x: 2, y: height},
-            "f12 f40 t00 t32 t04 f44")
-
-        }); // 3 center bar
-
-        this.els.push({ visible:true, path:
-            this.addPath({x: 0, y: height}, {x: 0, y: height * 2},
-            "f03 f12 f44 t40 t02")
-
-        }); // 4 bottom left
-
-        this.els.push({ visible:true, path:
-            this.addPath({x: 2, y: height}, {x: 2, y: height * 2},
-                "f04 f32 f43 t42 t24 t00"
-
-            )}); // 5 bottom right
-
-        this.els.push({ visible:true, path:
-            this.addPath({x: 0, y: height*2}, {x: 2, y: height * 2},
-            "f02 f40 t00 t24 f24"
-            )}); // 6 bottom bar
-
-    },
-
-
-    getDefinedPath:function(from, to, pathString){
-        var path = [];
-        var paths = pathString.split(/\s/g);
-        for(var i=0;i<paths.length;i++){
-            if(i == 0)path.push("M"); else path.push("L");
-
-            var target = paths[i].substr(0,1);
-            var offsetX = paths[i].substr(1,1) / 1;
-            var offsetY = paths[i].substr(2,1) / 1;
-
-            if(target == "f") {
-                path.push(this.pos(from.x, from.y, offsetX, offsetY).join(" "));
-            } else{
-                path.push(this.pos(to.x, to.y, offsetX, offsetY).join(" "));
-            }
-        }
-
-        path.push("Z");
-        console.log(path.join(" "));
-
-        return path.join(" ");
+        this.els.push({ visible:true, path: this.addPath({x: 0, y: 0}, {x: 2, y: 0}, "f02 f20 t20 t04 f44 f02" )}); // 0, top horizontal
+        this.els.push({ visible:true, path: this.addPath({x: 0, y: 0}, {x: 0, y: height},  "f02 f44 t40 t12 t00" ) }); //1, top left
+        this.els.push({ visible:true, path: this.addPath({x: 2, y: 0}, {x: 2, y: height}, "f04 f20 f42 t41 t32 t00") }); // 2, top right
+        this.els.push({ visible:true, path: this.addPath({x: 0, y: height}, {x: 2, y: height}, "f12 f40 t00 t32 t04 f44")  }); // 3 center bar
+        this.els.push({ visible:true, path: this.addPath({x: 0, y: height}, {x: 0, y: height * 2}, "f03 f12 f44 t40 t02")  }); // 4 bottom left
+        this.els.push({ visible:true, path: this.addPath({x: 2, y: height}, {x: 2, y: height * 2}, "f04 f32 f43 t42 t24 t00" )}); // 5 bottom right
+        this.els.push({ visible:true, path: this.addPath({x: 0, y: height*2}, {x: 2, y: height * 2}, "f02 f40 t00 t24 f24"  )}); // 6 bottom bar
     },
 
     pos:function(x,y, offsetX, offsetY){
@@ -116,10 +63,6 @@ $.extend(DG.ClockDigit.prototype, {
             this.bounds.x + (this.squareSize * x) + (this.squareSize * offsetX / 4),
             this.bounds.y + (this.squareSize * y) + (this.squareSize * offsetY / 4)
         ]
-    },
-
-    configure: function () {
-
     },
 
     showDigit: function (digit) {
@@ -142,13 +85,28 @@ $.extend(DG.ClockDigit.prototype, {
 
 
     addPath: function (from, to, definedPath) {
-        var pathString = this.getPathString(from, to, definedPath);
+        var pathString = this.getDefinedPath(from, to, definedPath);
 
         return this.svg.path(pathString, this.digitStyle);
     },
 
-    getPathString: function (from, to, definedPath) {
+    getDefinedPath:function(from, to, pathString){
+        var path = [];
+        var paths = pathString.split(/\s/g);
+        for(var i=0;i<paths.length;i++){
+            if(i == 0)path.push("M"); else path.push("L");
 
-        return this.getDefinedPath(from, to, definedPath);
+            var target = paths[i].substr(0,1);
+            var offsetX = paths[i].substr(1,1) / 1;
+            var offsetY = paths[i].substr(2,1) / 1;
+
+            if(target == "f") {
+                path.push(this.pos(from.x, from.y, offsetX, offsetY).join(" "));
+            } else{
+                path.push(this.pos(to.x, to.y, offsetX, offsetY).join(" "));
+            }
+        }
+        path.push("Z");
+        return path.join(" ");
     }
 });
