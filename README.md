@@ -1,6 +1,6 @@
 # SVG-Timer
 
-###Simple clock or timer 
+###Simple SVG timer 
 
 Example of Usage
 ```Javascript
@@ -10,9 +10,9 @@ Example of Usage
     var timer;
     $(document).ready(function () {
         timer = new DG.Timer({
-            countDownFrom : 5 * 60,
-            renderTo:"#timer",
-            showWheel:true,
+            countDownFrom : 5 * 60, // Count down from 5 minutes
+            renderTo:"#timer", // Render to <div id="timer"
+            showWheel:true, // Show count down wheel 
             digitStyles:{
                 fill : "#42A5F5",   // Color of digits
                 stroke : "#BBDEFB", // same color as background - used to create space
@@ -34,6 +34,7 @@ Example of Usage
     });
 
 </script>
+<!-- Custom buttons -->
 <input type="button" value="Pause" onclick="timer.pause()">
 <input type="button" value="Start" onclick="timer.start()">
 <input type="button" value="Reset" onclick="timer.reset()">
