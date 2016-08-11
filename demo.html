@@ -9,6 +9,7 @@
     <script type="text/javascript" src="jquery.svg.package-1.5.0/svg.js"></script>
     <script type="text/javascript" src="js/timer.js"></script>
     <script type="text/javascript" src="js/clockdigit.js"></script>
+    <script type="text/javascript" src="js/clockcolon.js"></script>
     <script type="text/javascript" src="js/geometry.js"></script>
     <title>Drawing Triangulation</title>
 </head>
@@ -16,10 +17,13 @@
 <div id="timer" style="width:300px;height:300px"></div>
 
 <script type="text/javascript">
+    var timer;
     $(document).ready(function () {
-        new DG.Timer({
+        timer = new DG.Timer({
+            countDownFrom : 20 * 60,
             renderTo:"#timer"
         });
+        timer.start();
     });
 
 </script>

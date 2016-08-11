@@ -120,6 +120,7 @@ $.extend(SVGManager.prototype, {
 			}
 		}
 		catch (e) {
+			console.log(e);
 			alert(e);
 		}
 	},
