@@ -13,6 +13,12 @@ Example of Usage
     $(document).ready(function () {
         timer = new DG.Timer({
             countDownFrom : 5 * 60, // Count down from 5 minutes
+            listeners:{
+                // Event function called when time's up.
+                onTimesUp:function(){
+                    console.log("Time is up");
+                }
+            },
             renderTo:"#timer", // Render to <div id="timer"
             showWheel:true, // Show count down wheel 
             digitStyles:{ // Styling of digits(OPTIONAL)
