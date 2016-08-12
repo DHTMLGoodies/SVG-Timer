@@ -23,10 +23,21 @@
 </div>
 
 <script type="text/javascript">
+    /* Demo function toggling start/pause and updating the button value */
+    function toggleStartPause(timer, button){
+        if(timer.active)button.value = "Start"; else button.value = "Pause";
+        timer.toggleStartPause();
+    }
     var timer;
     $(document).ready(function () {
         timer = new DG.Timer({
-            countDownFrom : 5 * 60,
+            countDownFrom : 5,
+            listeners:{
+                // Event function called when time's up.
+                onTimesUp:function(){
+                    console.log("Time is up");
+                }
+            },
             showHours:false,
             renderTo:"#timer",
             showWheel:true,
@@ -52,8 +63,7 @@
     });
 
 </script>
-<input type="button" value="Pause" onclick="timer.pause()">
-<input type="button" value="Start" onclick="timer.start()">
+<input type="button" value="Start" onclick="toggleStartPause(timer, this)">
 <input type="button" value="Reset" onclick="timer.reset()">
 
 <div id="timer2" style="width:200px;height:200px;margin-top:30px"></div>
@@ -79,8 +89,7 @@
     });
 
 </script>
-<input type="button" value="Pause" onclick="timer2.pause()">
-<input type="button" value="Start" onclick="timer2.start()">
+<input type="button" value="Start" onclick="toggleStartPause(timer2, this)">
 <input type="button" value="Reset" onclick="timer2.reset()">
 
 
@@ -109,8 +118,7 @@
     });
 
 </script>
-<input type="button" value="Pause" onclick="timer3.pause()">
-<input type="button" value="Start" onclick="timer3.start()">
+<input type="button" value="Start" onclick="toggleStartPause(timer3, this)">
 <input type="button" value="Reset" onclick="timer3.reset()">
 
 

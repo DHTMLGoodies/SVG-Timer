@@ -1,7 +1,7 @@
 /**
 DG-timer by DHTMLGoodies.com(Alf Magne Kalleland)
 License: Apache
-Compiled: 20160812152411
+Compiled: 20160812161137
  */
 if (!window.DG)window.DG = {};
 
@@ -19,6 +19,7 @@ DG.Timer = function (config) {
     if(config.digitStyles != undefined)this.digitStyles = config.digitStyles;
     if(config.wheelStyles != undefined)this.wheelStyles = config.wheelStyles;
     if(config.colonStyles != undefined)this.colonStyles = config.colonStyles;
+    if(config.listeners != undefined)this.listeners = config.listeners;
 
     this.configure();
 };
@@ -49,6 +50,10 @@ $.extend(DG.Timer.prototype, {
     sizes: undefined,
 
     digitOffset: undefined,
+
+    listeners:undefined,
+
+    lastUpdateTime:undefined,
 
     configure: function () {
 
@@ -246,6 +251,12 @@ $.extend(DG.Timer.prototype, {
 
         if (this.countDownFrom != undefined) {
             totalSeconds = Math.max(0, (this.countDownFrom) - totalSeconds);
+
+            if(totalSeconds == 0 && this.lastUpdateTime != undefined && this.lastUpdateTime){
+                this.onTimesUp();
+            }
+
+            this.lastUpdateTime = totalSeconds;
         }
 
         var seconds = totalSeconds % 60;
@@ -295,6 +306,7 @@ $.extend(DG.Timer.prototype, {
         this.elapsed = 0;
         this.startTime = undefined;
         this.active = false;
+        this.lastUpdateTime = undefined;
         this.showTime(0);
 
         if(this.showWheel){
@@ -303,7 +315,9 @@ $.extend(DG.Timer.prototype, {
     },
 
     onTimesUp: function () {
-
+        if(this.listeners != undefined && this.listeners.onTimesUp != undefined){
+            this.listeners.onTimesUp.call(this);
+        }
     },
 
     pause: function () {
@@ -315,6 +329,10 @@ $.extend(DG.Timer.prototype, {
     add: function (seconds) {
         this.elapsed += (seconds * 1000);
         this.elapsed = Math.max(0, this.elapsed);
+    },
+
+    toggleStartPause: function(){
+        if(this.active)this.pause(); else this.start();
     }
 });
 
