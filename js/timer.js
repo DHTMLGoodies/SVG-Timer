@@ -4,7 +4,7 @@ DG.Timer = function (config) {
 
     this.renderTo = $(config.renderTo);
     if (config.showHours != undefined)this.showHours = config.showHours;
-    if (config.decimalSeconds != undefined)this.decimalSeconds = config.decimalSeconds; else this.decimalSeconds = 0;
+    if (config.decimalSeconds != undefined)this.decimalSeconds = Math.min(2, config.decimalSeconds); else this.decimalSeconds = 0;
     if (config.countDownFrom != undefined) {
         this.countDownFrom = config.countDownFrom;
         if (config.showWheel != undefined)this.showWheel = config.showWheel;
