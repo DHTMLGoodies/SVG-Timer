@@ -8,7 +8,10 @@
 
 error_reporting(E_ALL);
 ini_set("display_errors", "on");
+date_default_timezone_set("Europe/Berlin");
 
+require_once("minify-master/src/Minify.php");
+require_once("minify-master/src/JS.php");
 use MatthiasMullie\Minify;
 
 
@@ -40,3 +43,13 @@ $minifier->add("js/clockdigit.js");
 $minifier->add("js/clockwheel.js");
 $minifier->add("js/clockcolon.js");
 $minifier->minify("js/timer-minified.js");
+
+
+$content = file_get_contents("js/timer-minified.js");
+
+$fh = fopen("js/timer-minified.js", "w");
+$copyRightMessage = "/*\nSVG Timer By DHTMLGoodies.com - Alf Magne Kalleland\nLicense: http://www.apache.org/licenses/LICENSE-2.0\nBuild: " . date("YmdHis"). "\n*/";
+
+fwrite($fh, $copyRightMessage, strlen($copyRightMessage));
+fwrite($fh, $content, strlen($content));
+fclose($fh);
