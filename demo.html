@@ -7,13 +7,13 @@
     <script type="text/javascript" src="js/jquery-2.2.0.js"></script>
     <script type="text/javascript" src="jquery.svg.package-1.5.0/jquery.svg.js"></script>
     <script type="text/javascript" src="jquery.svg.package-1.5.0/svg.js"></script>
-    <script type="text/javascript" src="js/dg-timer.js"></script>
+    <!--<script type="text/javascript" src="js/dg-timer.js"></script>
+-->
 
-    <!--
    <script type="text/javascript" src="js/timer.js"></script>
    <script type="text/javascript" src="js/clockcolon.js"></script>
    <script type="text/javascript" src="js/clockdigit.js"></script>
-   <script type="text/javascript" src="js/clockwheel.js"></script>-->
+   <script type="text/javascript" src="js/clockwheel.js"></script>
 
     <title>Drawing Triangulation</title>
 </head>
@@ -29,6 +29,7 @@
     $(document).ready(function () {
         timer = new DG.Timer({
             countDownFrom : 5 * 60,
+            showHours:false,
             renderTo:"#timer",
             showWheel:true,
             digitStyles:{
@@ -83,6 +84,36 @@
 <input type="button" value="Pause" onclick="timer2.pause()">
 <input type="button" value="Start" onclick="timer2.start()">
 <input type="button" value="Reset" onclick="timer2.reset()">
+
+
+<div id="timer3" style="width:200px;height:200px;margin-top:30px"></div>
+
+<script type="text/javascript">
+    var timer2;
+    $(document).ready(function () {
+        timer3 = new DG.Timer({
+            renderTo:"#timer3",
+            showHours:false,
+            decimalSeconds:1,
+            backgroundStyles:{ // Surface background
+                "fill": "#F1F8E9"
+            },
+            digitStyles:{
+                fill : "#33691E",   // Color of digits
+                stroke : "#33691E"  // same color as fill, ie no space between the lines in a digit
+            },
+            colonStyles:{ // Styles of colon
+                fill: "#33691E",
+                "stroke": "#F1F8E9", // Stroke can be used to make the colons smaller(same color as background)
+                strokeWidth : 2 // Stroke width (not visible)
+            }
+        });
+    });
+
+</script>
+<input type="button" value="Pause" onclick="timer3.pause()">
+<input type="button" value="Start" onclick="timer3.start()">
+<input type="button" value="Reset" onclick="timer3.reset()">
 
 
 </body>

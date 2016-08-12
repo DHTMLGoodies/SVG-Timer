@@ -6,6 +6,12 @@
  * Time: 16:38
  */
 
+error_reporting(E_ALL);
+ini_set("display_errors", "on");
+
+use MatthiasMullie\Minify;
+
+
 // Simple script compiling one JS file
 
 $files = array(
@@ -27,3 +33,10 @@ foreach($files as $file){
 }
 
 fclose($fh);
+
+$minifier = new Minify\JS();
+$minifier->add("js/timer.js");
+$minifier->add("js/clockdigit.js");
+$minifier->add("js/clockwheel.js");
+$minifier->add("js/clockcolon.js");
+$minifier->minify("js/timer-minified.js");

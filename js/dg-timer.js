@@ -1,7 +1,7 @@
 /**
 DG-timer by DHTMLGoodies.com(Alf Magne Kalleland)
 License: Apache
-Compiled: 20160812121001
+Compiled: 20160812135518
  */
 if (!window.DG)window.DG = {};
 
@@ -106,11 +106,22 @@ $.extend(DG.Timer.prototype, {
 
         var remainingArea = this.sizes.digitArea.width - (this.showHours ? this.sizes.colon * 2 : this.sizes.colon);
 
-        remainingArea -= this.sizes.spaceBetweenDigits * (this.showHours ? 6 : 4);
+        var spaces = this.showHours ? 6 : 4;
+        spaces += this.decimalSeconds;
+        remainingArea -= this.sizes.spaceBetweenDigits * spaces;
 
-        var digitSize = this.showHours ? remainingArea / 5 : remainingArea / 4;
+        var decimalSize = 0;
+
+        var digitSize;
+        var decimalDigitSize = 0;
+
+        digitSize = this.showHours ? remainingArea / 5 : remainingArea / 4;
+
 
         this.sizes.digits = {width: digitSize, height: digitSize * 3};
+        this.sizes.decimalDigits = {
+
+        };
 
         this.sizes.digitArea.height = this.sizes.digits.height;
 

@@ -4,6 +4,7 @@ DG.Timer = function (config) {
 
     this.renderTo = $(config.renderTo);
     if (config.showHours != undefined)this.showHours = config.showHours;
+    if (config.decimalSeconds != undefined)this.decimalSeconds = config.decimalSeconds; else this.decimalSeconds = 0;
     if (config.countDownFrom != undefined) {
         this.countDownFrom = config.countDownFrom;
         if (config.showWheel != undefined)this.showWheel = config.showWheel;
@@ -55,6 +56,7 @@ $.extend(DG.Timer.prototype, {
         this.digits.minutes = [];
         this.digits.seconds = [];
         this.digits.colons = [];
+        this.digits.decimals = [];
 
         this.renderTo.svg({
             onLoad: function (svg) {
@@ -77,7 +79,7 @@ $.extend(DG.Timer.prototype, {
             }.bind(this)
         });
 
-        setInterval(this.update.bind(this), 100);
+        setInterval(this.update.bind(this), this.decimalSeconds == 2 ? 10 : 100);
     },
 
     measure: function () {
@@ -101,9 +103,33 @@ $.extend(DG.Timer.prototype, {
 
         var remainingArea = this.sizes.digitArea.width - (this.showHours ? this.sizes.colon * 2 : this.sizes.colon);
 
-        remainingArea -= this.sizes.spaceBetweenDigits * (this.showHours ? 6 : 4);
+        var spaces = this.showHours ? 6 : 4;
+        if( this.decimalSeconds > 0)spaces += this.decimalSeconds;
+        remainingArea -= this.sizes.spaceBetweenDigits * spaces;
 
-        var digitSize = this.showHours ? remainingArea / 5 : remainingArea / 4;
+        var decimalSize = 0;
+
+        var digitSize;
+
+        if(this.decimalSeconds > 0){
+            var countDigits = this.showHours ? 5 : 4;
+            this.sizes.spaceBeforeDecimals = this.sizes.spaceBetweenDigits / 1;
+            remainingArea -= this.sizes.spaceBeforeDecimals;
+            var decimalRelativeSize = 0.7;
+
+            countDigits += decimalRelativeSize * this.decimalSeconds;
+
+            digitSize = remainingArea / countDigits;
+            decimalSize = digitSize * decimalRelativeSize;
+
+            this.sizes.decimalDigits = {
+                width : decimalSize,
+                height: decimalSize * 3
+            };
+
+        }else{
+            digitSize = this.showHours ? remainingArea / 5 : remainingArea / 4;
+        }
 
         this.sizes.digits = {width: digitSize, height: digitSize * 3};
 
@@ -182,6 +208,25 @@ $.extend(DG.Timer.prototype, {
             bounds: {x: x, y: y, width: this.sizes.digits.width, height: this.sizes.digits.height}
         }));
 
+        if(this.decimalSeconds > 0){
+            x += this.sizes.digits.width + this.sizes.spaceBetweenDigits + this.sizes.spaceBeforeDecimals;
+            y += this.sizes.digits.height - this.sizes.decimalDigits.height;
+
+            for(var i=0;i<this.decimalSeconds; i++){
+
+
+                this.digits.decimals.push(new DG.ClockDigit({
+                    styles: this.digitStyles,
+                    svg: this.svg,
+                    bounds: {x: x, y: y, width: this.sizes.decimalDigits.width, height: this.sizes.decimalDigits.height}
+                }));
+                x += this.sizes.decimalDigits.width + this.sizes.spaceBetweenDigits;
+            }
+
+
+
+        }
+
     },
 
     start: function () {
@@ -212,6 +257,18 @@ $.extend(DG.Timer.prototype, {
 
         this.digits.minutes[0].showDigit(min1 % 10);
         this.digits.minutes[1].showDigit(min2 % 10);
+
+
+        if(this.decimalSeconds > 0){
+
+            var dec1 = Math.floor(ms / 10) % 10;
+            var dec2 = Math.floor(ms / 100) % 10;
+
+            if(this.decimalSeconds > 1){
+                this.digits.decimals[1].showDigit(dec1);
+            }
+            this.digits.decimals[0].showDigit(dec2);
+        }
     },
 
     update: function () {
