@@ -1,7 +1,7 @@
 /**
 DG-timer by DHTMLGoodies.com(Alf Magne Kalleland)
 License: Apache
-Compiled: 20160811164428
+Compiled: 20160812121001
  */
 if (!window.DG)window.DG = {};
 
@@ -379,14 +379,10 @@ $.extend(DG.ClockDigit.prototype, {
 
 DG.ClockColon = function(config){
     this.svg = config.svg;
-    // { x, y, width, height }
     this.bounds = config.bounds;
-
     if(config.styles!= undefined)this.styles = config.styles;
-
     this.render();
 };
-
 
 $.extend(DG.ClockColon.prototype, {
 
@@ -405,11 +401,8 @@ $.extend(DG.ClockColon.prototype, {
         if(this.styles.stroke == undefined)this.styles.stroke = "#FFF";
         if(this.styles.strokeWidth == undefined)this.styles.strokeWidth = 1;
 
-
         var centerX = this.bounds.x + (this.bounds.width / 2);
         var centerY = this.bounds.y + (this.bounds.height / 2);
-
-        console.log(this.styles);
 
         this.dot1 = this.svg.circle(centerX, centerY - (this.bounds.height / 5), this.bounds.width/2, this.styles);
         this.dot2 = this.svg.circle(centerX, centerY + (this.bounds.height / 5), this.bounds.width/2, this.styles);
@@ -433,6 +426,7 @@ DG.ClockWheel = function (config) {
     if (config.styles != undefined) {
         this.styles = config.styles;
     }
+
     this.render();
 };
 
@@ -441,10 +435,6 @@ $.extend(DG.ClockWheel.prototype, {
     styles: undefined,
     radius: undefined,
     center: undefined,
-    els: {
-        background: undefined,
-        el: undefined
-    },
 
     polarToCartesian: function (centerX, centerY, radius, angleInDegrees) {
         var angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
@@ -457,9 +447,9 @@ $.extend(DG.ClockWheel.prototype, {
 
     describeArc: function (x, y, radius, startAngle, endAngle) {
 
-        var fullCircle = Math.max(startAngle, endAngle) - Math.min(startAngle , endAngle) >= 360;
+        var fullCircle = Math.max(startAngle, endAngle) - Math.min(startAngle, endAngle) >= 360;
 
-        if(fullCircle){
+        if (fullCircle) {
             startAngle = 0;
             endAngle = 359;
         }
@@ -477,7 +467,7 @@ $.extend(DG.ClockWheel.prototype, {
             "A", radius, radius, 0, arcSweep, 0, end.x, end.y
         ];
 
-        if(fullCircle){
+        if (fullCircle) {
             path.push("Z");
         }
         return path.join(" ");
@@ -485,6 +475,8 @@ $.extend(DG.ClockWheel.prototype, {
     },
 
     render: function () {
+        this.els = {};
+
         this.radius = {x: this.bounds.width / 2, y: this.bounds.height / 2};
         this.center = {x: this.bounds.x + this.bounds.width / 2, y: this.bounds.y + this.bounds.height / 2};
         if (this.styles == undefined) this.styles = {};
@@ -493,20 +485,20 @@ $.extend(DG.ClockWheel.prototype, {
             this.styles.background = {};
         }
 
-        if(this.styles.background.stroke == undefined)this.styles.background.fill = "#CCC";
-        if(this.styles.background.fill == undefined)this.styles.background.fill = "transparent";
+        if (this.styles.background.stroke == undefined)this.styles.background.fill = "#CCC";
+        if (this.styles.background.fill == undefined)this.styles.background.fill = "transparent";
 
         if (this.styles.wheel == undefined) {
-            this.styles.wheel = { };
+            this.styles.wheel = {};
         }
+        
+        if (this.styles.wheel.fill == undefined)this.styles.wheel.fill = "transparent";
+        if (this.styles.wheel.stroke == undefined)this.styles.wheel.stroke = "#669900";
 
-        if(this.styles.wheel.fill == undefined)this.styles.wheel.fill = "transparent";
-        if(this.styles.wheel.stroke == undefined)this.styles.wheel.stroke = "#669900";
+        if (this.styles.thickness == undefined)this.styles.thickness = this.bounds.width * 0.1;
 
-        if (this.styles.thickness == undefined)this.styles.thickness = 0.1;
-
-        this.styles.background.strokeWidth = this.bounds.width * this.styles.thickness;
-        this.styles.wheel.strokeWidth = this.bounds.width * this.styles.thickness;
+        this.styles.background.strokeWidth = this.styles.thickness;
+        this.styles.wheel.strokeWidth = this.styles.thickness;
 
         this.radius.x -= ( this.styles.background.strokeWidth / 2);
         this.radius.y -= ( this.styles.background.strokeWidth / 2);
@@ -524,4 +516,5 @@ $.extend(DG.ClockWheel.prototype, {
         this.wheel.setAttribute("d", path);
     }
 
-});
+})
+;
