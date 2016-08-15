@@ -1,7 +1,7 @@
 /**
 DG-timer by DHTMLGoodies.com(Alf Magne Kalleland)
 License: Apache
-Compiled: 20160812162702
+Compiled: 20160815125128
  */
 if (!window.DG)window.DG = {};
 
@@ -20,6 +20,7 @@ DG.Timer = function (config) {
     if(config.wheelStyles != undefined)this.wheelStyles = config.wheelStyles;
     if(config.colonStyles != undefined)this.colonStyles = config.colonStyles;
     if(config.listeners != undefined)this.listeners = config.listeners;
+    if(config.updateInterval != undefined)this.updateInterval = config.updateInterval; else this.updateInterval=10;
 
     this.configure();
 };
@@ -55,6 +56,8 @@ $.extend(DG.Timer.prototype, {
 
     lastUpdateTime:undefined,
 
+    updateInterval: undefined,
+
     configure: function () {
 
         this.sizes = {};
@@ -88,8 +91,9 @@ $.extend(DG.Timer.prototype, {
                 // this.debug();
             }.bind(this)
         });
+        
 
-        setInterval(this.update.bind(this), this.decimalSeconds == 2 ? 10 : 100);
+        setInterval(this.update.bind(this), this.updateInterval);
     },
 
     measure: function () {
@@ -163,7 +167,6 @@ $.extend(DG.Timer.prototype, {
             bounds: this.sizes.canvas,
             styles : this.wheelStyles
         });
-
     },
 
     renderDigits: function () {
@@ -552,7 +555,11 @@ $.extend(DG.ClockWheel.prototype, {
     render: function () {
         this.els = {};
 
-        this.radius = {x: this.bounds.width / 2, y: this.bounds.height / 2};
+
+        if (this.styles.thickness == undefined)this.styles.thickness = this.bounds.width * 0.1;
+
+
+        this.radius = {x: this.bounds.width / 2 -  (this.styles.thickness/2), y: this.bounds.height / 2 -  (this.styles.thickness/2)};
         this.center = {x: this.bounds.x + this.bounds.width / 2, y: this.bounds.y + this.bounds.height / 2};
         if (this.styles == undefined) this.styles = {};
 
@@ -566,11 +573,11 @@ $.extend(DG.ClockWheel.prototype, {
         if (this.styles.wheel == undefined) {
             this.styles.wheel = {};
         }
-        
+
         if (this.styles.wheel.fill == undefined)this.styles.wheel.fill = "transparent";
         if (this.styles.wheel.stroke == undefined)this.styles.wheel.stroke = "#669900";
 
-        if (this.styles.thickness == undefined)this.styles.thickness = this.bounds.width * 0.1;
+
 
         this.styles.background.strokeWidth = this.styles.thickness;
         this.styles.wheel.strokeWidth = this.styles.thickness;
@@ -582,14 +589,38 @@ $.extend(DG.ClockWheel.prototype, {
 
         var path = this.describeArc(this.center.x, this.center.y, this.radius.x, 0, 360);
         this.wheel = this.svg.path(path, this.styles.wheel);
+
+        this.renderBall();
+    },
+
+    renderBall:function(){
+        if(this.styles.ball == undefined){
+            this.styles.ball = {};
+        }
+        if(this.styles.ball.fill == undefined)this.styles.ball.fill = "#669900";
+        var pos = this.getBallPos(0);
+        this.ball = this.svg.circle(pos[0], pos[1], this.styles.thickness/1.2, this.styles.ball);
+    },
+
+    getBallPos:function(degrees){
+        var angleInRadians = (degrees - 90) * Math.PI / 180.0;
+
+        var x = this.center.x + (Math.cos(angleInRadians) * this.radius.x);
+        var y = this.center.y + (Math.sin(angleInRadians) * this.radius.x);
+        return [x,y];
     },
 
     update: function (total, elapsed) {
         if (elapsed > total)elapsed = total;
         var degrees = ((total - elapsed) / total) * 360;
+
         var path = this.describeArc(this.center.x, this.center.y, this.radius.x, 0, degrees);
         this.wheel.setAttribute("d", path);
+
+        var ballPos = this.getBallPos(degrees);
+
+        this.ball.setAttribute("cx", ballPos[0]);
+        this.ball.setAttribute("cy", ballPos[1]);
     }
 
-})
-;
+});

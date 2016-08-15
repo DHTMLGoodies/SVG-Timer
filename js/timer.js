@@ -15,6 +15,7 @@ DG.Timer = function (config) {
     if(config.wheelStyles != undefined)this.wheelStyles = config.wheelStyles;
     if(config.colonStyles != undefined)this.colonStyles = config.colonStyles;
     if(config.listeners != undefined)this.listeners = config.listeners;
+    if(config.updateInterval != undefined)this.updateInterval = config.updateInterval; else this.updateInterval=10;
 
     this.configure();
 };
@@ -50,6 +51,8 @@ $.extend(DG.Timer.prototype, {
 
     lastUpdateTime:undefined,
 
+    updateInterval: undefined,
+
     configure: function () {
 
         this.sizes = {};
@@ -83,8 +86,9 @@ $.extend(DG.Timer.prototype, {
                 // this.debug();
             }.bind(this)
         });
+        
 
-        setInterval(this.update.bind(this), this.decimalSeconds == 2 ? 10 : 100);
+        setInterval(this.update.bind(this), this.updateInterval);
     },
 
     measure: function () {
@@ -158,7 +162,6 @@ $.extend(DG.Timer.prototype, {
             bounds: this.sizes.canvas,
             styles : this.wheelStyles
         });
-
     },
 
     renderDigits: function () {

@@ -13,6 +13,8 @@ Example of Usage
     $(document).ready(function () {
         timer = new DG.Timer({
             countDownFrom : 5 * 60, // Count down from 5 minutes
+            // ms between each update of clock(100 = 1/10 seconds), 10 = 1/100 of a second(default=10)
+            updateInterval: 100,
             listeners:{
                 // Event function called when time's up.
                 onTimesUp:function(){

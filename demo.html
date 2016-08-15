@@ -7,57 +7,61 @@
     <script type="text/javascript" src="js/jquery-2.2.0.js"></script>
     <script type="text/javascript" src="jquery.svg.package-1.5.0/jquery.svg.js"></script>
     <script type="text/javascript" src="jquery.svg.package-1.5.0/svg.js"></script>
-    <script type="text/javascript" src="js/timer-minified.js"></script>
     <!--
-   <script type="text/javascript" src="js/timer.js"></script>
-   <script type="text/javascript" src="js/clockcolon.js"></script>
-   <script type="text/javascript" src="js/clockdigit.js"></script>
-   <script type="text/javascript" src="js/clockwheel.js"></script>-->
+    <script type="text/javascript" src="js/timer-minified.js"></script>
+   -->
+    <script type="text/javascript" src="js/timer.js"></script>
+    <script type="text/javascript" src="js/clockcolon.js"></script>
+    <script type="text/javascript" src="js/clockdigit.js"></script>
+    <script type="text/javascript" src="js/clockwheel.js"></script>
     <title>Drawing Triangulation</title>
 </head>
 <body>
 <!-- Simple image watch background -->
 <div style="position:relative;background-image:url(images/watch-bg.png);background-repeat: no-repeat; width:300px;height:360px">
     <!-- The watch will be placed inside the div below. Positioning the div inside the watch background -->
-<div id="timer" style="position:absolute;width:230px;height:230px;left:35px;top:95px"></div>
+    <div id="timer" style="position:absolute;width:230px;height:230px;left:35px;top:95px"></div>
 </div>
 
 <script type="text/javascript">
     /* Demo function toggling start/pause and updating the button value */
-    function toggleStartPause(timer, button){
-        if(timer.active)button.value = "Start"; else button.value = "Pause";
+    function toggleStartPause(timer, button) {
+        if (timer.active)button.value = "Start"; else button.value = "Pause";
         timer.toggleStartPause();
     }
     var timer;
     $(document).ready(function () {
         timer = new DG.Timer({
-            countDownFrom : 5 * 60,
-            listeners:{
+            countDownFrom: 60*5,
+            // ms between each update of clock(100 = 1/10 seconds), 10 = 1/100 of a second(default=10)
+            updateInterval: 100,
+            listeners: {
                 // Event function called when time's up.
-                onTimesUp:function(){
+                onTimesUp: function () {
                     console.log("Time is up");
                 }
             },
-            showHours:false,
-            renderTo:"#timer",
-            showWheel:true,
-            digitStyles:{
-                fill : "#FFF",   // Color of digits
-                stroke : "#707070", // same color as background - used to create space
-                strokeWidth : 1 // Stroke width = inline space between the lines of each digit
+            showHours: false,
+            renderTo: "#timer",
+            showWheel: true,
+            digitStyles: {
+                fill: "#FFF",   // Color of digits
+                stroke: "#707070", // same color as background - used to create space
+                strokeWidth: 1 // Stroke width = inline space between the lines of each digit
             },
-            backgroundStyles:{ // Surface background
+            backgroundStyles: { // Surface background
                 "fill": "transparent"
             },
-            wheelStyles:{ // SVG Styles of wheel (countdown)
-                background: { stroke : "#777"}, // background of wheel
-                wheel:{ stroke: "#CCC"} // Styles of running wheel,
-                , thickness : 7 // This is optional
+            wheelStyles: { // SVG Styles of wheel (countdown)
+                background: {stroke: "#777"}, // background of wheel
+                ball: {"fill": "#FFF "},
+                wheel: {stroke: "#CCC"} // Styles of running wheel,
+                , thickness: 7 // This is optional
             },
-            colonStyles:{ // Styles of colon
+            colonStyles: { // Styles of colon
                 fill: "#FFF",
                 "stroke": "#707070", // Stroke can be used to make the colons smaller(same color as background)
-                strokeWidth : 2 // Stroke width (not visible)
+                strokeWidth: 2 // Stroke width (not visible)
             }
         });
     });
@@ -72,18 +76,18 @@
     var timer2;
     $(document).ready(function () {
         timer2 = new DG.Timer({
-            renderTo:"#timer2",
-            backgroundStyles:{ // Surface background
+            renderTo: "#timer2",
+            backgroundStyles: { // Surface background
                 "fill": "#F1F8E9"
             },
-            digitStyles:{
-                fill : "#33691E",   // Color of digits
-                stroke : "#33691E"  // same color as fill, ie no space between the lines in a digit
+            digitStyles: {
+                fill: "#33691E",   // Color of digits
+                stroke: "#33691E"  // same color as fill, ie no space between the lines in a digit
             },
-            colonStyles:{ // Styles of colon
+            colonStyles: { // Styles of colon
                 fill: "#33691E",
                 "stroke": "#F1F8E9", // Stroke can be used to make the colons smaller(same color as background)
-                strokeWidth : 2 // Stroke width (not visible)
+                strokeWidth: 2 // Stroke width (not visible)
             }
         });
     });
@@ -99,20 +103,20 @@
     var timer2;
     $(document).ready(function () {
         timer3 = new DG.Timer({
-            renderTo:"#timer3",
-            showHours:false,
-            decimalSeconds:1,
-            backgroundStyles:{ // Surface background
+            renderTo: "#timer3",
+            showHours: false,
+            decimalSeconds: 1,
+            backgroundStyles: { // Surface background
                 "fill": "#F1F8E9"
             },
-            digitStyles:{
-                fill : "#33691E",   // Color of digits
-                stroke : "#33691E"  // same color as fill, ie no space between the lines in a digit
+            digitStyles: {
+                fill: "#33691E",   // Color of digits
+                stroke: "#33691E"  // same color as fill, ie no space between the lines in a digit
             },
-            colonStyles:{ // Styles of colon
+            colonStyles: { // Styles of colon
                 fill: "#33691E",
                 "stroke": "#F1F8E9", // Stroke can be used to make the colons smaller(same color as background)
-                strokeWidth : 2 // Stroke width (not visible)
+                strokeWidth: 2 // Stroke width (not visible)
             }
         });
     });
