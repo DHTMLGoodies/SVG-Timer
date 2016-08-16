@@ -17,6 +17,9 @@ DG.Timer = function (config) {
     if(config.listeners != undefined)this.listeners = config.listeners;
     if(config.updateInterval != undefined)this.updateInterval = config.updateInterval; else this.updateInterval=10;
 
+
+    this.autoRestart = config.autoRestart ||false;
+
     this.configure();
 };
 
@@ -24,11 +27,11 @@ $.extend(DG.Timer.prototype, {
 
     renderTo: undefined,
     svg: undefined,
+    autoRestart:undefined,
 
     showHours: true,
     countDownFrom: undefined,
     showWheel: false,
-    updateInterval: 1000,
 
     digitStyles:undefined,
     colonStyles:undefined,
@@ -86,7 +89,7 @@ $.extend(DG.Timer.prototype, {
                 // this.debug();
             }.bind(this)
         });
-        
+
 
         setInterval(this.update.bind(this), this.updateInterval);
     },
@@ -315,6 +318,11 @@ $.extend(DG.Timer.prototype, {
     onTimesUp: function () {
         if(this.listeners != undefined && this.listeners.onTimesUp != undefined){
             this.listeners.onTimesUp.call(this);
+        }
+
+        if(this.autoRestart){
+            this.reset();
+            this.start();
         }
     },
 
