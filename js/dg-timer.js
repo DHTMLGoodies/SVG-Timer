@@ -1,7 +1,7 @@
 /**
 DG-timer by DHTMLGoodies.com(Alf Magne Kalleland)
 License: Apache
-Compiled: 20160816094422
+Compiled: 20160816145655
  */
 if (!window.DG)window.DG = {};
 
@@ -24,6 +24,7 @@ DG.Timer = function (config) {
 
 
     this.autoRestart = config.autoRestart ||false;
+    this.delayBeforeAutoRestart = config.delayBeforeAutoRestart || 0;
 
     this.configure();
 };
@@ -33,6 +34,7 @@ $.extend(DG.Timer.prototype, {
     renderTo: undefined,
     svg: undefined,
     autoRestart:undefined,
+    delayBeforeAutoRestart:undefined,
 
     showHours: true,
     countDownFrom: undefined,
@@ -246,6 +248,13 @@ $.extend(DG.Timer.prototype, {
     },
 
     start: function () {
+        if(this.active){
+            return;
+        }
+        if(this.listeners != undefined && this.listeners.onStart != undefined){
+            this.listeners.onStart.call(this);
+        }
+
         if (this.elapsed == undefined)this.elapsed = 0;
         this.startTime = new Date().getTime();
         this.active = true;
@@ -327,9 +336,15 @@ $.extend(DG.Timer.prototype, {
 
         if(this.autoRestart){
             this.reset();
-            this.start();
+            if(this.delayBeforeAutoRestart > 0){
+                setTimeout(this.start.bind(this), this.delayBeforeAutoRestart * 1000);
+            }else{
+                this.start();
+            }
         }
     },
+
+
 
     pause: function () {
         this.active = false;
