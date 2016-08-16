@@ -14,9 +14,11 @@
     <script type="text/javascript" src="js/clockcolon.js"></script>
     <script type="text/javascript" src="js/clockdigit.js"></script>
     <script type="text/javascript" src="js/clockwheel.js"></script>
-    <title>Drawing Triangulation</title>
+    <title>SVG Timer/Stopwatch</title>
 </head>
 <body>
+<h2>Timer</h2>
+<p>Count down 10 seconds. Then auto restarts timer after 3 seconds.</p>
 <!-- Simple image watch background -->
 <div style="position:relative;background-image:url(images/watch-bg.png);background-repeat: no-repeat; width:300px;height:360px">
     <!-- The watch will be placed inside the div below. Positioning the div inside the watch background -->
@@ -32,14 +34,19 @@
     var timer;
     $(document).ready(function () {
         timer = new DG.Timer({
-            countDownFrom: 30,
+            countDownFrom: 10,
             autoRestart:true,
+            delayBeforeAutoRestart:3,
             // ms between each update of clock(100 = 1/10 seconds), 10 = 1/100 of a second(default=10)
             updateInterval: 10,
             listeners: {
                 // Event function called when time's up.
                 onTimesUp: function () {
                     console.log("Time is up");
+                },
+                onStart:function(){
+                    // Function call on timer start.
+                    console.log("Starting timer");
                 }
             },
             showHours: false,
@@ -108,15 +115,15 @@
             showHours: false,
             decimalSeconds: 1,
             backgroundStyles: { // Surface background
-                "fill": "#F1F8E9"
+                "fill": "#FFF"
             },
             digitStyles: {
-                fill: "#33691E",   // Color of digits
-                stroke: "#33691E"  // same color as fill, ie no space between the lines in a digit
+                fill: "#4A148C",   // Color of digits
+                stroke: "#4A148C"  // same color as fill, ie no space between the lines in a digit
             },
             colonStyles: { // Styles of colon
-                fill: "#33691E",
-                "stroke": "#F1F8E9", // Stroke can be used to make the colons smaller(same color as background)
+                fill: "#4A148C",
+                "stroke": "#FFF", // Stroke can be used to make the colons smaller(same color as background)
                 strokeWidth: 2 // Stroke width (not visible)
             }
         });
